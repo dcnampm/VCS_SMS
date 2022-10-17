@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dcnampm/VCS_SMS.git/initializers""
+	"github.com/dcnampm/VCS_SMS.git/initializers"
 	"github.com/dcnampm/VCS_SMS.git/models"
 	"github.com/dcnampm/VCS_SMS.git/utils"
 	"github.com/gin-gonic/gin"
@@ -42,12 +42,12 @@ func (ac *AuthController) SignUpUser(ctx *gin.Context) {
 
 	now := time.Now()
 	newUser := models.User{
-		User_name:      payload.Name,
-		User_email:     strings.ToLower(payload.Email),
-		Password:  hashedPassword,
-		Verified:  true,
-		CreatedAt: now,
-		UpdatedAt: now,
+		User_name:  payload.Name,
+		User_email: strings.ToLower(payload.Email),
+		Password:   hashedPassword,
+		Verified:   true,
+		CreatedAt:  now,
+		UpdatedAt:  now,
 	}
 
 	result := ac.DB.Create(&newUser)
@@ -87,13 +87,13 @@ func (ac *AuthController) SignInUser(ctx *gin.Context) {
 	config, _ := initializers.LoadConfig(".")
 
 	// Generate Tokens
-	access_token, err := utils.CreateToken(config.AccessTokenExpiresIn, user.ID, config.AccessTokenPrivateKey)
+	access_token, err := utils.CreateToken(config.AccessTokenExpiresIn, user.User_id, config.AccessTokenPrivateKey)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
 
-	refresh_token, err := utils.CreateToken(config.RefreshTokenExpiresIn, user.ID, config.RefreshTokenPrivateKey)
+	refresh_token, err := utils.CreateToken(config.RefreshTokenExpiresIn, user.User_id, config.RefreshTokenPrivateKey)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
 		return
@@ -105,4 +105,3 @@ func (ac *AuthController) SignInUser(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "access_token": access_token})
 }
-
