@@ -15,21 +15,21 @@ type User struct {
 }
 
 type SignUp struct {
-	Name            string `json:"name" binding:"required"`
-	Email           string `json:"email" binding:"required"`
+	User_name       string `json:"user_name" binding:"required"`
+	User_email      string `json:"user_email" binding:"required"`
 	Password        string `json:"password" binding:"required,min=8"`
 	PasswordConfirm string `json:"passwordConfirm" binding:"required"`
 }
 
 type SignIn struct {
-	Email    string `json:"email"  binding:"required"`
-	Password string `json:"password"  binding:"required"`
+	User_email string `json:"user_email"  binding:"required"`
+	Password   string `json:"password"  binding:"required"`
 }
 
 type UserResponse struct {
-	ID        uint      `json:"id"`
-	Name      string    `json:"name"`
-	Email     string    `json:"email"`
-	CreatedAt time.Time `json:"create_at"`
-	UpdatedAt time.Time `json:"update_at"`
+	User_id    uint      `json:"user_id"`
+	User_name  string    `json:"user_name"`
+	User_email string    `json:"user_email"`
+	CreatedAt  time.Time `json:"create_at"`
+	UpdatedAt  time.Time `json:"update_at"`
 }

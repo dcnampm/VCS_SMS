@@ -43,8 +43,8 @@ func (ac *AuthController) SignUpUser(ctx *gin.Context) {
 
 	now := time.Now()
 	newUser := models.User{
-		User_name:  payload.Name,
-		User_email: strings.ToLower(payload.Email),
+		User_name:  payload.User_name,
+		User_email: strings.ToLower(payload.User_email),
 		Password:   hashedPassword,
 		Verified:   true,
 		CreatedAt:  now,
@@ -62,11 +62,11 @@ func (ac *AuthController) SignUpUser(ctx *gin.Context) {
 	}
 
 	userResponse := &models.UserResponse{
-		ID:        newUser.User_id,
-		Name:      newUser.User_name,
-		Email:     newUser.User_email,
-		CreatedAt: newUser.CreatedAt,
-		UpdatedAt: newUser.UpdatedAt,
+		User_id:    newUser.User_id,
+		User_name:  newUser.User_name,
+		User_email: newUser.User_email,
+		CreatedAt:  newUser.CreatedAt,
+		UpdatedAt:  newUser.UpdatedAt,
 	}
 
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": gin.H{"user": userResponse}})
@@ -82,7 +82,7 @@ func (ac *AuthController) SignInUser(ctx *gin.Context) {
 	}
 
 	var user models.User
-	result := ac.DB.First(&user, "email = ?", strings.ToLower(payload.Email))
+	result := ac.DB.First(&user, "user_email = ?", strings.ToLower(payload.User_email))
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Invalid email or Password"})
 		return
