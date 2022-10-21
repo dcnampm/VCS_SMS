@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -29,7 +30,7 @@ func (ac *AuthController) SignUpUser(ctx *gin.Context) {
 		return
 	}
 
-	if payload.Password != payload.PasswordConfirm {
+	if payload.PasswordConfirm != payload.Password {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Password do not match"})
 		return
 	}
@@ -60,10 +61,18 @@ func (ac *AuthController) SignUpUser(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, gin.H{"status": "success"})
+	userResponse := &models.UserResponse{
+		ID:        newUser.User_id,
+		Name:      newUser.User_name,
+		Email:     newUser.User_email,
+		CreatedAt: newUser.CreatedAt,
+		UpdatedAt: newUser.UpdatedAt,
+	}
+
+	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": gin.H{"user": userResponse}})
 }
 
-// [...] Login User
+// [...] SignIn User
 func (ac *AuthController) SignInUser(ctx *gin.Context) {
 	var payload *models.SignIn
 
@@ -104,4 +113,51 @@ func (ac *AuthController) SignInUser(ctx *gin.Context) {
 	ctx.SetCookie("logged_in", "true", config.AccessTokenMaxAge*60, "/", "localhost", false, false)
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "access_token": access_token})
+}
+
+// [...] Refresh Access Token
+func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
+	message := "Could not refresh access token"
+
+	cookie, err := ctx.Cookie("refresh_token")
+
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{"status": "fail", "message": message})
+		return
+	}
+
+	config, _ := initializers.LoadConfig(".")
+
+	sub, err := utils.ValidateToken(cookie, config.RefreshTokenPublicKey)
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	var user models.User
+	result := ac.DB.First(&user, "id = ?", fmt.Sprint(sub))
+	if result.Error != nil {
+		ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{"status": "fail", "message": "The user belonging to this token no logger exists"})
+		return
+	}
+
+	access_token, err := utils.CreateToken(config.AccessTokenExpiresIn, user.User_id, config.AccessTokenPrivateKey)
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	ctx.SetCookie("access_token", access_token, config.AccessTokenMaxAge*60, "/", "localhost", false, true)
+	ctx.SetCookie("logged_in", "true", config.AccessTokenMaxAge*60, "/", "localhost", false, false)
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "access_token": access_token})
+}
+
+// [...] Logout user
+func (ac *AuthController) LogoutUser(ctx *gin.Context) {
+	ctx.SetCookie("access_token", "", -1, "/", "localhost", false, true)
+	ctx.SetCookie("refresh_token", "", -1, "/", "localhost", false, true)
+	ctx.SetCookie("logged_in", "", -1, "/", "localhost", false, false)
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 }
