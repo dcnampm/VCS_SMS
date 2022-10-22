@@ -17,7 +17,7 @@ func NewUserController(DB *gorm.DB) UserController {
 }
 
 func (uc *UserController) GetMe(ctx *gin.Context) {
-	currentUser := ctx.MustGet("currentUser").(models.User)
+	currentUser := ctx.MustGet("currentUser").(models.User) //MustGet returns the value for the given key if it exists, otherwise it panics.
 
 	userResponse := &models.UserResponse{
 		User_id:    currentUser.User_id,
