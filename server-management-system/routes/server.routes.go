@@ -23,4 +23,6 @@ func (rc *ServerRouteController) ServerRoute(rg *gin.RouterGroup) {
 	router.GET("/view/filter", rc.serverController.ViewAndFilterServers)
 	router.PUT("/:serverID", rc.serverController.UpdateServer)
 	router.DELETE("/:serverID", rc.serverController.DeleteServer)
+	router.GET("/export", rc.serverController.ExportExcel)
+	// router.GET("/import", rc.serverController.ImportExcel)
 }

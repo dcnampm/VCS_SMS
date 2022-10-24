@@ -156,16 +156,16 @@ func (sc *ServerController) ExportExcel(ctx *gin.Context) {
 	f.SetCellValue("Sheet1", "F1", "Last_updated")
 	f.SetCellValue("Sheet1", "G1", "Ipv4")
 
-	var Servers []models.Server
+	var servers []models.Server
 
-	for i, server := range Servers {
-		f.SetCellValue("Sheet1", "A"+strconv.Itoa(i+2), server.Server_id)
-		f.SetCellValue("Sheet1", "B"+strconv.Itoa(i+2), server.Server_name)
-		f.SetCellValue("Sheet1", "C"+strconv.Itoa(i+2), server.User_id)
-		f.SetCellValue("Sheet1", "D"+strconv.Itoa(i+2), server.Status)
-		f.SetCellValue("Sheet1", "F"+strconv.Itoa(i+2), server.Created_time)
-		f.SetCellValue("Sheet1", "G"+strconv.Itoa(i+2), server.Last_updated)
-		f.SetCellValue("Sheet1", "E"+strconv.Itoa(i+2), server.Ipv4)
+	for i, r := range servers {
+		f.SetCellValue("Sheet1", "A"+strconv.Itoa(i+2), r.Server_id)
+		f.SetCellValue("Sheet1", "B"+strconv.Itoa(i+2), r.Server_name)
+		f.SetCellValue("Sheet1", "C"+strconv.Itoa(i+2), r.User_id)
+		f.SetCellValue("Sheet1", "D"+strconv.Itoa(i+2), r.Status)
+		f.SetCellValue("Sheet1", "F"+strconv.Itoa(i+2), r.Created_time)
+		f.SetCellValue("Sheet1", "G"+strconv.Itoa(i+2), r.Last_updated)
+		f.SetCellValue("Sheet1", "E"+strconv.Itoa(i+2), r.Ipv4)
 
 	}
 
@@ -175,3 +175,91 @@ func (sc *ServerController) ExportExcel(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success"})
 }
+
+//ImportExcel
+// func (sc *ServerController) ImportExcel(ctx *gin.Context) {
+// 	var servers []models.Server
+// 	sc.DB.Offset(0).Find(&servers)
+
+// 	f, err := excelize.OpenFile("ImportServer.xlsx")
+// 	if err != nil {
+// 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Failed to import Db to excel", "error": err})
+// 		return
+// 	}
+
+// 	rows, err := f.GetRows("Sheet1")
+// 	if err != nil {
+// 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": err.Error()})
+// 		return
+// 	}
+
+// 	now := time.Now()
+
+// 	serversImport := make([]models.Server, 0)
+
+// 	serversAccept := make([]models.ImportExcel, 0)
+// 	serversFail := make([]models.ImportExcel, 0)
+
+// 	if len(servers) != 0 {
+// 		for _, r := range servers {
+// 			for _, row := range rows {
+// 				if len(row) != 0 {
+// 					if r.Server_id == row[0] || r.Server_name == row[1] {
+// 						newServerFail := models.ImportExcel{
+// 							Server_id:   row[0],
+// 							Server_name: row[1],
+// 						}
+// 						serversFail = append(serversFail, newServerFail)
+// 						continue
+// 					}
+// 					user_id, _ := strconv.Atoi(row[4])
+// 					newServer := models.Server{
+// 						Server_id:    row[0],
+// 						Server_name:  row[1],
+// 						Status:       row[2],
+// 						Ipv4:         row[3],
+// 						User_id:      user_id,
+// 						Created_time: now,
+// 						Last_updated: now,
+// 					}
+// 					serversImport = append(serversImport, newServer)
+
+// 					newServerAccept := models.ImportExcel{
+// 						Server_id:   row[0],
+// 						Server_name: row[1],
+// 					}
+// 					serversAccept = append(serversAccept, newServerAccept)
+// 				}
+// 			}
+// 		}
+// 	} else {
+// 		for _, row := range rows {
+// 			if len(row) != 0 {
+// 				user_id, _ := strconv.Atoi(row[4])
+// 				newServer := models.Server{
+// 					Server_id:    row[0],
+// 					Server_name:  row[1],
+// 					Status:       row[2],
+// 					Ipv4:         row[3],
+// 					User_id:      user_id,
+// 					Created_time: now,
+// 					Last_updated: now,
+// 				}
+// 				serversImport = append(serversImport, newServer)
+
+// 				newServerAccept := models.ImportExcel{
+// 					Server_id:   row[0],
+// 					Server_name: row[1],
+// 				}
+// 				serversAccept = append(serversAccept, newServerAccept)
+// 			}
+// 		}
+// 	}
+// 	results := sc.DB.Create(&serversImport)
+
+// 	if results.Error != nil {
+// 		ctx.JSON(http.StatusOK, gin.H{"status": "fail", "message": results.Error.Error()})
+// 		return
+// 	}
+// 	ctx.JSON(http.StatusCreated, gin.H{"status": gin.H{"ImportEccept": gin.H{"CountAccept": len(serversAccept), "data": serversAccept}, "ImportFail": gin.H{"CountFail": len(serversFail), "data": serversFail}}})
+// }
