@@ -19,9 +19,8 @@ func (rc *ServerRouteController) ServerRoute(rg *gin.RouterGroup) {
 	router := rg.Group("servers")
 	router.Use(middleware.DeserializeUser())
 	router.POST("/", rc.serverController.CreateServer)
-	router.GET("/:serverID", rc.serverController.ViewAServer)
-	router.GET("/", rc.serverController.ViewAllServers)
-	router.GET("/", rc.serverController.FilterServers)
-	router.PUT("/:serverId", rc.serverController.UpdateServer)
-	router.DELETE("/:serverId", rc.serverController.DeleteServer)
+	router.GET("/view/sort", rc.serverController.ViewAndSortServers)
+	router.GET("/view/filter", rc.serverController.ViewAndFilterServers)
+	router.PUT("/:serverID", rc.serverController.UpdateServer)
+	router.DELETE("/:serverID", rc.serverController.DeleteServer)
 }
