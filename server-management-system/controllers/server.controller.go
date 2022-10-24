@@ -170,7 +170,7 @@ func (sc *ServerController) ExportExcel(ctx *gin.Context) {
 	}
 
 	if err := f.SaveAs("ExportServer.xlsx"); err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Failed to export DB to the excel", "error": err})
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Failed to export DB to excel", "error": err})
 		return
 	}
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success"})
