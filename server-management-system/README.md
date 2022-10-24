@@ -1,8 +1,7 @@
-# VCS_SMS
-## 1.Quản lý trạng thái On/Off của  server
+# VCS_SMS - Quản lý trạng thái On/Off của  server
 
-## 2.Installation
-## 3.Build
+## 1.Installation
+## 2.Build
 ### 1.Tạo file docker-compose.yml để 
 ### 2.Tạo file app.env chứa thông tin đăng nhập vào postgres
 ### 3.Khởi động Postgres Docker container với lệnh:      docker-compose up -d
@@ -41,12 +40,12 @@
     ![DeleteServer](https://user-images.githubusercontent.com/109098045/197561228-d16e979d-f7f9-471f-be4a-ba079d5333eb.png)
 
 ### 10.Export danh sách server từ db ra file excel, Import tạo danh sách server vào file excel 
-## 4.Technologies Used
+## 3.Technologies Used
 - Viper package: github.com/spf13/viper
 - Gorm package
 - Gin framework
 ...
-## 5.Chưa hoàn thành
+## 4.Chưa hoàn thành
 - Báo cáo định kỳ (gửi email)
 - Unit Test
 - Dùng Redis Cache để Optimize performance
