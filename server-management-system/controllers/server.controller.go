@@ -8,6 +8,7 @@ import (
 
 	"github.com/dcnampm/VCS_SMS.git/models"
 	"github.com/gin-gonic/gin"
+	"github.com/xuri/excelize/v2"
 	"gorm.io/gorm"
 )
 
@@ -48,24 +49,12 @@ func (sc *ServerController) CreateServer(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error.Error()})
 		return
 	}
+
+	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": newServer})
 }
 
-//View A Server
-func (sc *ServerController) ViewAServer(ctx *gin.Context) {
-	serverID := ctx.Param("serverID")
-
-	var server models.Server
-	result := sc.DB.First(&server, "server_id = ?", serverID)
-	if result.Error != nil {
-		ctx.JSON(http.StatusNotFound, gin.H{"status": "fail", "message": "Server not exist"})
-		return
-	}
-
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": server})
-}
-
-//View All Servers
-func (sc *ServerController) ViewAllServers(ctx *gin.Context) {
+//View And Sort Servers
+func (sc *ServerController) ViewAndSortServers(ctx *gin.Context) {
 	//func (c *Context) DefaultQuery(key, defaultValue string) string
 	// returns the keyed url query value if it exists, otherwise it returns the specified defaultValue string
 	var page = ctx.DefaultQuery("page", "1") //phân trang, default 1 trang có 10 servers
@@ -88,33 +77,35 @@ func (sc *ServerController) ViewAllServers(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(servers), "data": servers})
 }
 
-//Filter Servers
-func (sc *ServerController) FilterServers(ctx *gin.Context) {
+//View And Filter Servers
+func (sc *ServerController) ViewAndFilterServers(ctx *gin.Context) {
 	var filterBy = ctx.DefaultQuery("filterBy", "status")
-	var filterResponse = ctx.DefaultQuery("filterResponse", "Off")
+	var filterRequest = ctx.DefaultQuery("filterRequest", "Off")
 
 	var servers []models.Server
-	results := sc.DB.Where(filterBy, filterResponse).Find(&servers)
+	results := sc.DB.Where(filterBy, filterRequest).Find(&servers)
 	if results.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
 		return
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(servers), "data": servers})
+
 }
 
 //Update Server
 func (sc *ServerController) UpdateServer(ctx *gin.Context) {
 	serverID := ctx.Param("serverID") //Param returns the value of the URL param
+
 	currentUser := ctx.MustGet("currentUser").(models.User)
-	var payload *models.UpdateServer //nhap
+	var payload *models.UpdateServer
 
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
-	var updatedServer models.Server
-	result := sc.DB.First(&updatedServer, "server_id = ?", serverID)
+	var server models.Server
+	result := sc.DB.First(&server, "server_id = ?", serverID)
 
 	if result.Error != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{"status": "fail", "message": "Server not exist"})
@@ -130,9 +121,9 @@ func (sc *ServerController) UpdateServer(ctx *gin.Context) {
 		Ipv4:         payload.Ipv4,
 	}
 
-	sc.DB.Model(&updatedServer).Updates(serverUpdate)
+	sc.DB.Model(&server).Updates(serverUpdate)
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": updatedServer})
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": serverUpdate})
 }
 
 //Delete Server
@@ -147,4 +138,40 @@ func (sc *ServerController) DeleteServer(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": "Delete Completed"})
+}
+
+//ExportExcel
+func (sc *ServerController) ExportExcel(ctx *gin.Context) {
+	f := excelize.NewFile()
+
+	// Create a new sheet.
+	// index := f.NewSheet("Sheet1")
+
+	// Set value of a cell
+	f.SetCellValue("Sheet1", "A1", "Server_id")
+	f.SetCellValue("Sheet1", "B1", "Server_name")
+	f.SetCellValue("Sheet1", "C1", "User_id")
+	f.SetCellValue("Sheet1", "D1", "Status")
+	f.SetCellValue("Sheet1", "E1", "Created_time")
+	f.SetCellValue("Sheet1", "F1", "Last_updated")
+	f.SetCellValue("Sheet1", "G1", "Ipv4")
+
+	var Servers []models.Server
+
+	for i, server := range Servers {
+		f.SetCellValue("Sheet1", "A"+strconv.Itoa(i+2), server.Server_id)
+		f.SetCellValue("Sheet1", "B"+strconv.Itoa(i+2), server.Server_name)
+		f.SetCellValue("Sheet1", "C"+strconv.Itoa(i+2), server.User_id)
+		f.SetCellValue("Sheet1", "D"+strconv.Itoa(i+2), server.Status)
+		f.SetCellValue("Sheet1", "F"+strconv.Itoa(i+2), server.Created_time)
+		f.SetCellValue("Sheet1", "G"+strconv.Itoa(i+2), server.Last_updated)
+		f.SetCellValue("Sheet1", "E"+strconv.Itoa(i+2), server.Ipv4)
+
+	}
+
+	if err := f.SaveAs("ExportServer.xlsx"); err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Failed to export DB to the excel", "error": err})
+		return
+	}
+	ctx.JSON(http.StatusCreated, gin.H{"status": "success"})
 }
