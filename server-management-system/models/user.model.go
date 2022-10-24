@@ -5,7 +5,7 @@ import (
 )
 
 type User struct {
-	User_id    uint   `gorm:"type:serial;primary_key"`
+	User_id    int    `gorm:"type:serial;primary_key"`
 	User_name  string `gorm:"type:varchar(255);not null"`
 	User_email string `gorm:"uniqueIndex;not null"`
 	Password   string `gorm:"not null"`
@@ -27,7 +27,7 @@ type SignIn struct {
 }
 
 type UserResponse struct {
-	User_id    uint      `json:"user_id"`
+	User_id    int       `json:"user_id"`
 	User_name  string    `json:"user_name"`
 	User_email string    `json:"user_email"`
 	CreatedAt  time.Time `json:"create_at"`
