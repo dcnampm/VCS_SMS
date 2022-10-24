@@ -1,16 +1,28 @@
 # VCS_SMS
 ##1.Quản lý trạng thái On/Off của  server
+
 ##2.Installation
+
 ##3.Build
+
 ###1.Tạo file docker-compose.yml để 
+
 ###2.Tạo file app.env chứa thông tin đăng nhập vào postgres
+
 ###3.Khởi động Postgres Docker container với lệnh:      docker-compose up -d
+
 ###4.Tạo file connectDB.go để kết nối với Postgres server
+
 ###5. Xây dựng mô hình cơ sở dữ liệu, tạo User trong Postgres
+
 ###6. Tạo file migrate.go và chạy
+
 ###7. Tạo Golang server với gin gonic, package air để reload Gin server mỗi lần thay đổi
+
 ###8. Tạo các struct Server, các hàm, router để tương tác với Server
-###8.Test Go API server
+
+###9.Test Go API server
+
 - Register cho User
     ![UserRegister](https://user-images.githubusercontent.com/109098045/197560904-94757a4b-00f0-4417-9a9d-48da36822b4c.png)
 
@@ -38,7 +50,8 @@
 - Xóa 1 Server theo id
     ![DeleteServer](https://user-images.githubusercontent.com/109098045/197561228-d16e979d-f7f9-471f-be4a-ba079d5333eb.png)
 
-###9.Export danh sách server từ db ra file excel, Import tạo danh sách server vào file excel 
+###10.Export danh sách server từ db ra file excel, Import tạo danh sách server vào file excel 
+
 ##4.Technologies Used
 - Viper package: github.com/spf13/viper
 - Gorm package
