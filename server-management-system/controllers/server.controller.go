@@ -157,6 +157,7 @@ func (sc *ServerController) ExportExcel(ctx *gin.Context) {
 	f.SetCellValue("Sheet1", "G1", "Ipv4")
 
 	var servers []models.Server
+	sc.DB.Find(&servers)
 	for i, r := range servers {
 		f.SetCellValue("Sheet1", "A"+strconv.Itoa(i+2), r.Server_id)
 		f.SetCellValue("Sheet1", "B"+strconv.Itoa(i+2), r.Server_name)
