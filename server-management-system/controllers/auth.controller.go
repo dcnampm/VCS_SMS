@@ -83,7 +83,7 @@ func (ac *AuthController) SignInUser(ctx *gin.Context) {
 
 	config, _ := initializers.LoadConfig(".")
 
-	// Generate Tokens
+	//Generate Tokens
 	access_token, err := utils.CreateToken(config.AccessTokenExpiresIn, user.User_id, config.AccessTokenPrivateKey)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
