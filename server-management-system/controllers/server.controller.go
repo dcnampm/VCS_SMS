@@ -163,9 +163,9 @@ func (sc *ServerController) ExportExcel(ctx *gin.Context) {
 		f.SetCellValue("Sheet1", "B"+strconv.Itoa(i+2), r.Server_name)
 		f.SetCellValue("Sheet1", "C"+strconv.Itoa(i+2), r.User_id)
 		f.SetCellValue("Sheet1", "D"+strconv.Itoa(i+2), r.Status)
-		f.SetCellValue("Sheet1", "F"+strconv.Itoa(i+2), r.Created_time)
-		f.SetCellValue("Sheet1", "G"+strconv.Itoa(i+2), r.Last_updated)
-		f.SetCellValue("Sheet1", "E"+strconv.Itoa(i+2), r.Ipv4)
+		f.SetCellValue("Sheet1", "E"+strconv.Itoa(i+2), r.Created_time)
+		f.SetCellValue("Sheet1", "F"+strconv.Itoa(i+2), r.Last_updated)
+		f.SetCellValue("Sheet1", "G"+strconv.Itoa(i+2), r.Ipv4)
 
 	}
 

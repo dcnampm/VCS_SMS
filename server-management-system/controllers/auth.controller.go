@@ -35,20 +35,14 @@ func (ac *AuthController) SignUpUser(ctx *gin.Context) {
 		return
 	}
 
-	hashedPassword, err := utils.HashPassword(payload.Password)
-	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": err.Error()})
-		return
-	}
-
 	now := time.Now()
 	newUser := models.User{
 		User_name:  payload.User_name,
 		User_email: strings.ToLower(payload.User_email),
-		Password:   hashedPassword,
-		Verified:   true,
-		CreatedAt:  now,
-		UpdatedAt:  now,
+		// Password:   hashedPassword,
+		Verified:  true,
+		CreatedAt: now,
+		UpdatedAt: now,
 	}
 
 	result := ac.DB.Create(&newUser)
@@ -84,11 +78,6 @@ func (ac *AuthController) SignInUser(ctx *gin.Context) {
 	var user models.User
 	result := ac.DB.First(&user, "user_email = ?", strings.ToLower(payload.User_email))
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Invalid email or Password"})
-		return
-	}
-
-	if err := utils.VerifyPassword(user.Password, payload.Password); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Invalid email or Password"})
 		return
 	}
