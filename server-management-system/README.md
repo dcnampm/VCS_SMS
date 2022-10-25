@@ -39,13 +39,14 @@
 - Xóa 1 Server theo id
     ![DeleteServer](https://user-images.githubusercontent.com/109098045/197561228-d16e979d-f7f9-471f-be4a-ba079d5333eb.png)
 
-### 10.Export danh sách server từ db ra file excel, Import tạo danh sách server vào file excel 
+### 10.Export danh sách server từ db ra file excel
 ## 3.Technologies Used
 - Viper package: github.com/spf13/viper
 - Gorm package
 - Gin framework
 ...
 ## 4.Chưa hoàn thành
+- Import tạo danh sách server từ file excel 
 - Báo cáo định kỳ (gửi email)
 - Unit Test
 - Dùng Redis Cache để Optimize performance
