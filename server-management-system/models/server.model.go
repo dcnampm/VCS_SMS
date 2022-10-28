@@ -10,6 +10,7 @@ type Server struct {
 	Created_time time.Time `gorm:"not null" json:"created_time,omitempty"`
 	Last_updated time.Time `gorm:"not null" json:"last_updated,omitempty"`
 	Ipv4         string    `gorm:"not null" json:"ipv4,omitempty"`
+	Uptime       float64   `gorm:"not null" json:"uptime,omitempty"`
 }
 
 type CreateNewServer struct {
@@ -19,6 +20,7 @@ type CreateNewServer struct {
 	Created_time time.Time `json:"created_time,omitempty"`
 	Last_updated time.Time `json:"last_updated,omitempty"`
 	Ipv4         string    `json:"ipv4,omitempty" binding:"required"`
+	Uptime       float64   `json:"uptime,omitempty"`
 }
 
 type UpdateServer struct {
