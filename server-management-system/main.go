@@ -1,10 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
-	"net/smtp"
 
 	"github.com/dcnampm/VCS_SMS.git/controllers"
 	"github.com/dcnampm/VCS_SMS.git/initializers"
@@ -46,33 +44,6 @@ func init() {
 	server = gin.Default()
 }
 
-func SendEmail() {
-	from := "pdnsm080701@gmail.com"
-	password := "yzvaovycjwarpfet"
-
-	toEmailAddress := "pdnsm080701@gmail.com"
-	to := []string{toEmailAddress}
-
-	host := "smtp.gmail.com"
-	port := "587"
-	address := host + ":" + port
-
-	subject := "Subject: Server Report\n"
-	body := "This is the body of the mail"
-	message := []byte(subject + body)
-
-	//func PlainAuth(identity, username, password, host string) Auth
-	auth := smtp.PlainAuth("", from, password, host)
-
-	//Send mail
-	//func SendMail(addr string, a Auth, from string, to []string, msg []byte) error
-	err := smtp.SendMail(address, auth, from, to, message)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("Check ur mail")
-}
-
 func main() {
 	config, err := initializers.LoadConfig(".")
 	if err != nil {
@@ -91,13 +62,12 @@ func main() {
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": message})
 	})
 
+	go func() {
+		ServerController.DailyReport()
+	}()
+
 	AuthRouteController.AuthRoute(router)
 	UserRouteController.UserRoute(router)
 	ServerRouteController.ServerRoute(router)
 	log.Fatal(server.Run(":" + config.ServerPort))
-
-	// s := gocron.NewScheduler(time.UTC)
-
-	// s.Every(5).Seconds().Do(func(){ ... })
-
 }

@@ -175,3 +175,28 @@ func (sc *ServerController) ExportExcel(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success"})
 }
+
+//CheckStatusServer
+func (sc *ServerController) CheckStatus() (countServer, countServerOn, countServerOff int, upTimeAvg float64) {
+	var servers []models.Server
+	sc.DB.Find(&servers)
+
+	countServer = len(servers)
+	countServerOn = 0
+	countServerOff = 0
+	upTimeTotal := 0.0
+
+	for _, r := range servers {
+		upTimeTotal += r.Uptime
+
+		if r.Status == "On" {
+			countServerOn++
+		} else {
+			countServerOff++
+		}
+	}
+
+	upTimeAvg = upTimeTotal / float64(countServer)
+
+	return countServer, countServerOn, countServerOff, upTimeAvg
+}
