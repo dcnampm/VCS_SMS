@@ -9,7 +9,7 @@ import (
 
 func (sc *ServerController) DailyReport() {
 	s := gocron.NewScheduler()
-	s.Every(1).Day().At("14:14:00").Do(sc.SendEmail)
+	s.Every(1).Day().At("15:53:00").Do(sc.SendEmail)
 	s.Start()
 }
 

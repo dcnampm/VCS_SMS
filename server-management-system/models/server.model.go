@@ -30,6 +30,7 @@ type UpdateServer struct {
 	Created_time time.Time `json:"created_time,omitempty"`
 	Last_updated time.Time `json:"last_updated,omitempty"`
 	Ipv4         string    `json:"ipv4,omitempty"`
+	Uptime       float64   `json:"uptime,omitempty"`
 }
 
 type ImportExcel struct {

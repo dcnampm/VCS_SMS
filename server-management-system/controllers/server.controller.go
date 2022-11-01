@@ -38,6 +38,7 @@ func (sc *ServerController) CreateServer(ctx *gin.Context) {
 		Created_time: now,
 		Last_updated: now,
 		Ipv4:         payload.Ipv4,
+		Uptime:       payload.Uptime,
 	}
 
 	result := sc.DB.Create(&newServer)
@@ -119,6 +120,7 @@ func (sc *ServerController) UpdateServer(ctx *gin.Context) {
 		Created_time: now,
 		Last_updated: now,
 		Ipv4:         payload.Ipv4,
+		Uptime:       payload.Uptime,
 	}
 
 	sc.DB.Model(&server).Updates(serverUpdate)
@@ -155,6 +157,7 @@ func (sc *ServerController) ExportExcel(ctx *gin.Context) {
 	f.SetCellValue("Sheet1", "E1", "Created_time")
 	f.SetCellValue("Sheet1", "F1", "Last_updated")
 	f.SetCellValue("Sheet1", "G1", "Ipv4")
+	f.SetCellValue("Sheet1", "H1", "Uptime")
 
 	var servers []models.Server
 	sc.DB.Find(&servers)
@@ -166,6 +169,7 @@ func (sc *ServerController) ExportExcel(ctx *gin.Context) {
 		f.SetCellValue("Sheet1", "E"+strconv.Itoa(i+2), r.Created_time)
 		f.SetCellValue("Sheet1", "F"+strconv.Itoa(i+2), r.Last_updated)
 		f.SetCellValue("Sheet1", "G"+strconv.Itoa(i+2), r.Ipv4)
+		f.SetCellValue("Sheet1", "H"+strconv.Itoa(i+2), r.Uptime)
 
 	}
 

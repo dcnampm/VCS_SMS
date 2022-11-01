@@ -123,7 +123,7 @@ func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
 	}
 
 	var user models.User
-	result := ac.DB.First(&user, "id = ?", fmt.Sprint(sub))
+	result := ac.DB.First(&user, "user_id = ?", fmt.Sprint(sub))
 	if result.Error != nil {
 		ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{"status": "fail", "message": "The user belonging to this token no logger exists"})
 		return
