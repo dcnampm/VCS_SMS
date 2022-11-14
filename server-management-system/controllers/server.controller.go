@@ -179,6 +179,103 @@ func (sc *ServerController) ExportExcel(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success"})
 }
+//ImportExcel
+func (sc *ServerController) ImportExcel(ctx *gin.Context) {
+
+	file, err := ctx.FormFile("file")
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Failed to import Database from excel", "error": err.Error()})
+		return
+	}
+
+	f, err := excelize.OpenFile(file.Filename)
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Failed to import Database from excel", "error": err})
+		return
+	}
+
+	rows, err := f.GetRows("Sheet1")
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": err.Error()})
+		return
+	}
+
+	now := time.Now()
+	var servers []models.Server
+	sc.DB.Find(&servers)
+
+	serversImport := make([]models.Server, 0)
+
+	serversAccept := make([]models.ImportExcel, 0)
+	serversFail := make([]models.ImportExcel, 0)
+
+	if len(servers) != 0 {
+		for _, server := range servers {
+			for _, row := range rows {
+				if len(row) != 0 {
+					if server.Server_id == row[0] || server.Server_name == row[1] {
+						newServerFail := models.ImportExcel{
+							Server_id:   row[0],
+							Server_name: row[1],
+						}
+						serversFail = append(serversFail, newServerFail)
+						continue
+					}
+					user, _ := strconv.Atoi(row[2])
+					uptime, _ := strconv.ParseFloat(row[7], 32)
+					newServer := models.Server{
+						Server_id:    row[0],
+						Server_name:  row[1],
+						User_id:      user,
+						Status:       row[3],
+						Created_time: now,
+						Last_updated: now,
+						Ipv4:         row[6],
+						Uptime:       uptime,
+					}
+					serversImport = append(serversImport, newServer)
+
+					newServerAccept := models.ImportExcel{
+						Server_id:   row[0],
+						Server_name: row[1],
+					}
+					serversAccept = append(serversAccept, newServerAccept)
+				}
+			}
+		}
+	} else {
+		for _, row := range rows {
+			if len(row) != 0 {
+				user, _ := strconv.Atoi(row[2])
+				uptime, _ := strconv.ParseFloat(row[7], 32)
+				newServer := models.Server{
+					Server_id:    row[0],
+					Server_name:  row[1],
+					User_id:      user,
+					Status:       row[3],
+					Created_time: now,
+					Last_updated: now,
+					Ipv4:         row[6],
+					Uptime:       uptime,
+				}
+				serversImport = append(serversImport, newServer)
+
+				newServerAccept := models.ImportExcel{
+					Server_id:   row[0],
+					Server_name: row[1],
+				}
+				serversAccept = append(serversAccept, newServerAccept)
+			}
+		}
+	}
+	results := sc.DB.Create(&serversImport)
+
+	if results.Error != nil {
+		ctx.JSON(http.StatusOK, gin.H{"status": "fail", "message": results.Error.Error()})
+		return
+	}
+	ctx.JSON(http.StatusCreated, gin.H{"status": gin.H{"ImportSuccess": gin.H{"CountAccept": len(serversAccept), "data": serversAccept}, "ImportFail": gin.H{"CountFail": len(serversFail), "data": serversFail}}})
+}
 
 //CheckStatusServer
 func (sc *ServerController) CheckStatus() (countServer, countServerOn, countServerOff int, upTimeAvg float64) {
