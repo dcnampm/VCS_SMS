@@ -4,7 +4,7 @@ version: '1'
 services:
   postgres: #tên service
     image: postgres #image cuar service, dùng image có sẵn trên DockerHub
-    container_name: dcnampm
+    container_name: database
     ports:
       - 6500:5432
     env_file:
