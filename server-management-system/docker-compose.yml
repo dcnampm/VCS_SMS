@@ -1,4 +1,4 @@
-version: '1'
+# version: "3.8"
 
 #Database container/service
 services:
@@ -11,33 +11,44 @@ services:
       - ./app.env
     volumes:
       - postgres:/var/lib/postgresql/data
+    # networks:
+    #   - postgres
 
   
-  #The application container/service for the API
+  #The application containesudo apt install docker-compose-pluginr/service for the API
   system:
     container_name: sms
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
+      # context: .
+      # dockerfile: Dockerfile
     volumes:
       - api:/usr/src/app/
+    restart: always  
     depends_on:
       - postgres  
     ports:
-      - 8080:8080
+      - 8000:8080
+    # networks:
+    #   - postgres
+    
 
 
   #Database admin tools  
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: dcnampm
-    env_file:
-      - ./app.env
-    depends_on: 
-      - postgres  
-    ports:
-      - 5050:80  
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   container_name: dcnampm
+  #   env_file:
+  #     - ./app.env
+  #   depends_on: 
+  #     - postgres  
+  #   ports:
+  #     - 5050:80  
 
 volumes:
   api:
   postgres:
+
+#Networks to be created to facilitate communication between containers
+# networks:
+#   postgres:
+#     drive: bridge
