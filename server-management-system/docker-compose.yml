@@ -16,13 +16,15 @@ services:
   #The application container/service for the API
   system:
     container_name: sms
-    build: .
-    ports:
-      - 8080:8080
+    build:
+      context: .
+      dockerfile: Dockerfile
     volumes:
       - api:/usr/src/app/
     depends_on:
       - postgres  
+    ports:
+      - 8080:8080
 
 
   #Database admin tools  
