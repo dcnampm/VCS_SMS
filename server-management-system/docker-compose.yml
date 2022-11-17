@@ -1,4 +1,4 @@
-# version: "3.8"
+version: "3.8"
 
 #Database container/service
 services:
@@ -11,8 +11,8 @@ services:
       - ./app.env
     volumes:
       - postgres:/var/lib/postgresql/data
-    # networks:
-    #   - connect
+    networks:
+      - connect
 
   
   #The application containesudo apt install docker-compose-pluginr/service for the API
@@ -28,8 +28,8 @@ services:
       - postgres  
     ports:
       - 8000:8080
-    # networks:
-    #   - connect
+    networks:
+      - connect
     
 
 
@@ -49,6 +49,6 @@ volumes:
   postgres:
 
 #Networks to be created to facilitate communication between containers
-# networks:
-#   connect:
-#     drive: bridge
+networks:
+  connect:
+    drive: bridge
