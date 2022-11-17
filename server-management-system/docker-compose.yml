@@ -12,15 +12,15 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
     # networks:
-    #   - postgres
+    #   - connect
 
   
   #The application containesudo apt install docker-compose-pluginr/service for the API
   system:
     container_name: sms
-    build: .
-      # context: .
-      # dockerfile: Dockerfile
+    build: 
+      context: .
+      dockerfile: Dockerfile
     volumes:
       - api:/usr/src/app/
     restart: always  
@@ -29,7 +29,7 @@ services:
     ports:
       - 8000:8080
     # networks:
-    #   - postgres
+    #   - connect
     
 
 
@@ -50,5 +50,5 @@ volumes:
 
 #Networks to be created to facilitate communication between containers
 # networks:
-#   postgres:
+#   connect:
 #     drive: bridge

@@ -12,7 +12,6 @@ COPY go.mod go.sum ./
 #dowload dependencies
 RUN go mod download 
 
-RUN chown -R node /app/node_modules
 #copy source code into the image
 COPY . .
 
