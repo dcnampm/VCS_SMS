@@ -1,4 +1,4 @@
-version: "3.8"
+version: '3.8'
 
 #Database container/service
 services:
@@ -7,48 +7,30 @@ services:
     container_name: database
     ports:
       - 6500:5432
-    env_file:
-      - ./app.env
+    environment:
+      POSTGRES_USER: dcnampm
+      POSTGRES_PASSWORD: nam.pd193034@
+      POSTGRES_DB: server-management-system
     volumes:
       - postgres:/var/lib/postgresql/data
-    networks:
-      - connect
-
   
-  #The application containesudo apt install docker-compose-pluginr/service for the API
-  system:
+  #The application container for the API
+  app:
     container_name: sms
     build: 
       context: .
       dockerfile: Dockerfile
-    volumes:
-      - api:/usr/src/app/
-    restart: always  
+    # volumes:
+    #   - api:/usr/src/app/
+    # restart: always  
     depends_on:
       - postgres  
-    ports:
-      - 8000:8080
-    networks:
-      - connect
-    
-
-
-  #Database admin tools  
-  # pgadmin:
-  #   image: dpage/pgadmin4
-  #   container_name: dcnampm
-  #   env_file:
-  #     - ./app.env
-  #   depends_on: 
-  #     - postgres  
-  #   ports:
-  #     - 5050:80  
 
 volumes:
-  api:
+  # api:
   postgres:
 
 #Networks to be created to facilitate communication between containers
-networks:
-  connect:
-    drive: bridge
+# networks:
+#   db-network:
+#     drive: bridge
