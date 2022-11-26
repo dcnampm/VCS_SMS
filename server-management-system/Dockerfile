@@ -1,5 +1,5 @@
 #from golang base image //FROM <image>[:<tag>] [AS <name>]
-FROM golang:alpine as builder
+FROM golang:alpine
 
 #install Git
 RUN apk update && apk add --no-cache git
@@ -16,22 +16,22 @@ RUN go mod download
 COPY . .
 
 # Build the Go app
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
-# RUN go build -o/build
+# RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+RUN go build -v -o /build
 
 # Start a new stage from scratch
-FROM alpine:latest
-RUN apk --no-cache add ca-certificates
+# FROM alpine:latest
+# RUN apk --no-cache add ca-certificates
 
-WORKDIR /root/
+# WORKDIR /root/
 
-# Copy the Pre-built binary file from the previous stage. Observe we also copied the app.env file
-COPY --from=builder /app/main .
-COPY --from=builder /app/app.env .
+#  Copy the Pre-built binary file from the previous stage. Observe we also copied the app.env file
+# COPY --from=builder /app/main .
+# COPY --from=builder /app/app.env .
 
 # Expose port 8080 to the outside world
-EXPOSE 8080
+# EXPOSE 8080
 
 #Command to run the executable
-CMD ["./main"]
+CMD ["./build"]
 
