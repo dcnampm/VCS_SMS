@@ -20,14 +20,14 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
-    # volumes:
-    #   - api:/usr/src/app/
+    volumes:
+      - api:/usr/src/app/
     # restart: always  
     depends_on:
       - postgres  
 
 volumes:
-  # api:
+  api:
   postgres:
 
 #Networks to be created to facilitate communication between containers
